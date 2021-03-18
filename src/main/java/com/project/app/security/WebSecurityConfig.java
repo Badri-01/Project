@@ -33,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable()
 		    .authorizeRequests()
-		      //    .antMatchers("/api/v1/**").permitAll()
+		         //.antMatchers("/api/v1/**").permitAll()
 		        .antMatchers(HttpMethod.POST,"/api/v1/login/").permitAll()
 		        .antMatchers(HttpMethod.POST,"/api/v1/user/register/").permitAll()   //These two URL paths are not secured.
                 .anyRequest().authenticated()               //All other paths must be authenticated.

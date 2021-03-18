@@ -15,7 +15,6 @@ public class RoleService {
 	private RoleRepository roleRepository;
 	
 	public void addRole(Role role) {
-		role.setRoleStatus("Inactive");
 		roleRepository.insert(role);
 	}
 
@@ -27,12 +26,17 @@ public class RoleService {
 		Role role = roleRepository.findByRoleName(roleName);
 		if(role==null)
 			return null;
-		roleRepository.delete(role);
+		role.setRoleStatus("Inactive");
+		roleRepository.save(role);
 		return role;
 	}
 
 	public Role getByRoleName(String roleName) {
 		return roleRepository.findByRoleName(roleName);
+	}
+	
+	public boolean existsByName(String roleName) {
+		return roleRepository.existsByName(roleName);
 	}
 }
 

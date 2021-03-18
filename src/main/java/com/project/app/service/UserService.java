@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.project.app.dto.UserDto;
 import com.project.app.model.User;
 import com.project.app.repository.UserRepository;
 
@@ -35,7 +36,8 @@ public class UserService {
 		User user=userRepository.findByUsername(username);
 		if(user==null)
 			return null;
-		userRepository.delete(user);
+		user.setStatus("Inactive");
+		userRepository.save(user);
 		return user;
 	}
 
@@ -43,11 +45,13 @@ public class UserService {
 		return userRepository.findByUsername(username);
 	}
 
-	public User updateUser(String username, User user) {
+	public User updateUser(String username, UserDto userDto) {
 		User oldUser = userRepository.findByUsername(username);
 		if(oldUser==null)
 			return null;
-		user.setPassword(bcryptEncoder.encode(user.getPassword()));
+		User user=userDto.toUser();
+		if(user.getPassword()!=null)
+		     user.setPassword(bcryptEncoder.encode(user.getPassword()));
 		oldUser.update(user);
 		userRepository.save(oldUser);
 		return oldUser;

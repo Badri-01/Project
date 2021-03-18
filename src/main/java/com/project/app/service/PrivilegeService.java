@@ -38,8 +38,6 @@ public class PrivilegeService {
 	private ResourceRepository resourceRepository;
 
 	public List<Privilege> getAllPrivileges() {
-		List<String> sortBy = new ArrayList<String>();
-		sortBy.add("resourceName");
 		return privilegeRepository.findAll(Sort.by(Sort.Direction.ASC, "roleName"));
 	}
 
@@ -58,11 +56,7 @@ public class PrivilegeService {
 		if (roles.contains(dbrole)) {
 			throw new RoleAlreadyAssignedException("User " + username + " already has " + role.getRoleName() + " role");
 		}
-		if (dbrole.getRoleStatus().equals("Inactive")) {
-			dbrole.setRoleStatus("Active");
-		}
 		roles.add(dbrole);
-		roleRepository.save(dbrole);
 		user.setRoles(roles);
 		return userRepository.save(user);
 	}
@@ -139,8 +133,8 @@ public class PrivilegeService {
 	}
 
 	public Privilege deletePrivileges(@Valid Privilege privilege) throws NoPrivilegeFoundException {
-		Privilege dbPrivilege = privilegeRepository.findByRoleNameAndResourceName(privilege.getRoleName(),
-				privilege.getResourceName());
+		Privilege dbPrivilege = privilegeRepository.findByRoleNameAndResourceName(privilege.getRoleName().toUpperCase(),
+				privilege.getResourceName().toUpperCase());
 		if (dbPrivilege == null) {
 			throw new NoPrivilegeFoundException("No privileges of role " + privilege.getRoleName()
 					+ " exists for the resource " + privilege.getResourceName());
@@ -160,7 +154,7 @@ public class PrivilegeService {
 	}
 
 	public List<Privilege> getPrivilegesOfResource(String resourceName) throws NoPrivilegeFoundException {
-		List<Privilege> privilegesOfResource = privilegeRepository.findByResourceName(resourceName);
+		List<Privilege> privilegesOfResource = privilegeRepository.findByResourceName(resourceName.toUpperCase());
 		if (privilegesOfResource == null) {
 			throw new NoPrivilegeFoundException("No privileges exist for the resource " + resourceName);
 		}
@@ -179,11 +173,6 @@ public class PrivilegeService {
 		} else
 			System.out.println("User " + username + " doesn't contain " + role.getRoleName());
 		user.setRoles(roles);
-		if (userRepository.findByRole(dbrole).size() == 1) {
-			dbrole.setRoleStatus("Inactive");
-			roleRepository.save(dbrole);
-		}
-
 		return userRepository.save(user);
 	}
 }

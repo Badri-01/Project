@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.app.dto.UserDto;
 import com.project.app.exception.user.UserAlreadyExistsException;
 import com.project.app.exception.user.UserNotFoundException;
 import com.project.app.model.User;
@@ -29,8 +30,6 @@ import com.project.app.service.UserService;
 @RequestMapping("/api/v1/user/")
 @RestController	
 public class UserController {
-	
-	User dummyObject=new User();
 	
 	@Autowired
 	private UserService userService;
@@ -65,8 +64,8 @@ public class UserController {
 	
 	@PreAuthorize("hasAccess('user','update')")
 	@PutMapping(path = "{username}")
-	public @ResponseBody String updateUser(@PathVariable("username") String username, @Valid @RequestBody User user) throws UserNotFoundException{
-		user=userService.updateUser(username,user);
+	public @ResponseBody String updateUser(@PathVariable("username") String username, @RequestBody UserDto userDto) throws UserNotFoundException{
+		User user=userService.updateUser(username,userDto);
 		if(user!=null)
 			return "User "+user.getUsername()+" account updated";
 		throw new UserNotFoundException(username);
