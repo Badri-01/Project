@@ -9,10 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.project.app.model.Historymodel;
-import com.project.app.model.Projectmodel;
 import com.project.app.model.Testcasemodel;
 import com.project.app.repository.Historyrepo;
-import com.project.app.repository.Repository;
 import com.project.app.repository.Testcaserepo;
 
 @EnableScheduling
@@ -26,33 +24,55 @@ public class Scheduler {
 	
 	@Scheduled(cron = "0 0 7 * * *")
 	void startofthday() {
-		int noOftestcasesopened=0;
+		int noOftestcaseopened=0;
+		int noOftestcasepassed=0;
+		int noOftestcasefailed=0;
 		List<Testcasemodel> testcasesList=testcaserepo.findAll();
 		Historymodel history=new Historymodel();
 		history.setTimeofscheduler("startoftheday");
+		history.setTotalnooftestcases(testcasesList.size());
 		for(Testcasemodel testcase:testcasesList) {
 			if(testcase.getStatus().equals("Notstarted")) {
-				noOftestcasesopened+=1;
+				noOftestcaseopened+=1;
 				
 			}
-			history.setNooftestcasesopened(noOftestcasesopened);
-			repo.save(history);
+			else if(testcase.getStatus().equals("Passed")) {
+				noOftestcasepassed+=1;
+			}
+			else if(testcase.getStatus().equals("Failed")) {
+				noOftestcasefailed+=1;
+			}
 		}
+			history.setNooftestcasepassed(noOftestcasepassed);
+			history.setNooftestcasesfailed(noOftestcasefailed);
+			history.setNooftestcasesopened(noOftestcaseopened);
+			repo.save(history);
 		
 	}
 	@Scheduled(cron="0 0 17 * * *")
 	void endoftheday() {
-		int noOftestcasesopened=0;
+		int noOftestcaseopened=0;
+		int noOftestcasepassed=0;
+		int noOftestcasefailed=0;
 		List<Testcasemodel> testcasesList=testcaserepo.findAll();
 		Historymodel history=new Historymodel();
 		history.setTimeofscheduler("endoftheday");
+		history.setTotalnooftestcases(testcasesList.size());
 		for(Testcasemodel testcase:testcasesList) {
 			if(testcase.getStatus().equals("Notstarted")) {
-				noOftestcasesopened+=1;
+				noOftestcaseopened+=1;
 				
 			}
+			else if(testcase.getStatus().equals("Passed")) {
+				noOftestcasepassed+=1;
+			}
+			else if(testcase.getStatus().equals("Failed")) {
+				noOftestcasefailed+=1;
+			}
 		}
-			history.setNooftestcasesopened(noOftestcasesopened);
+			history.setNooftestcasepassed(noOftestcasepassed);
+			history.setNooftestcasesfailed(noOftestcasefailed);
+			history.setNooftestcasesopened(noOftestcaseopened);
 			repo.save(history);
 }
 }

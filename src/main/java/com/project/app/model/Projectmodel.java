@@ -1,4 +1,6 @@
 package com.project.app.model;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
@@ -11,9 +13,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;*/
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.project.app.exception.DatesMismatchException;
+
 
 @Document(collection = "projects")
 public class Projectmodel {
+	private  SimpleDateFormat df=new SimpleDateFormat("yyyy-mm-dd");
 	@Id
 	private String projectId;
 	@NotNull
@@ -52,25 +57,37 @@ public class Projectmodel {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public Date getStartdate() {
-		return startdate;
+	public Date getStartdate() throws ParseException {
+		return df.parse(df.format(startdate));
 	}
-	public void setStartdate(Date startdate) {
-		this.startdate = startdate;
+	public void setStartdate(Date startdate) throws ParseException {
+		this.startdate = df.parse(df.format(startdate));
 	}
-	public Date getEnddate() {
-		return enddate;
+	public Date getEnddate() throws ParseException
+	{
+		return df.parse(df.format(enddate));
 	}
-	public void setEnddate(Date enddate) {
-		this.enddate = enddate;
+	public void setEnddate(Date enddate) throws DatesMismatchException, ParseException {
+		if(checkDates(enddate)) {
+		this.enddate = df.parse(df.format(enddate));
 	}
-	public Date getTargetedrelease() {
-		return targetedrelease;
+		throw new DatesMismatchException("enddate");
 	}
-	public void setTargetedrelease(Date targetedrelease) {
-		this.targetedrelease = targetedrelease;
+	public Date getTargetedrelease() throws ParseException {
+		return df.parse(df.format(targetedrelease));
 	}
-	
-	
+	public void setTargetedrelease(Date targetedrelease) throws DatesMismatchException, ParseException {
+		if(checkDates(targetedrelease)) {
+		this.targetedrelease = df.parse(df.format(targetedrelease));
+	}
+	throw new DatesMismatchException("targetedrelease");
+	}
+	public boolean checkDates(Date date) {
+		System.out.println(date+"pog"+startdate);
+		if(date.after(startdate)) {
+			return true;
+		}
+		return false;
+	}
 
 }

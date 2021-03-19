@@ -36,4 +36,10 @@ public class ProjectExceptionhandlers {
 		
 	}
 	
+	@ExceptionHandler(DatesMismatchException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public @ResponseBody String handleDatesMismatchException(DatesMismatchException ex) {
+		return ex.getMessage()+"should not be less than the startdate";
+	}
+	
 }
