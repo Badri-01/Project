@@ -1,8 +1,14 @@
 package com.project.app.model;
 
+import java.util.Date;
+
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,8 +18,13 @@ public class Role {
 	private String roleId;
 	@Indexed(unique=true)
 	private String roleName;
-	
-	private String roleStatus;
+	@CreatedDate
+    private Date createdDate;
+	@LastModifiedDate
+	private Date lastModifiedDate;
+	//@LastModifiedBy
+	//private String lastModifiedBy=SecurityContextHolder.getContext().getAuthentication().getName();
+	private String roleStatus="Active";
 	
 	public Role(@JsonProperty("roleName")String roleName) {
 		this.roleName = roleName;
@@ -29,6 +40,7 @@ public class Role {
 	}
 
 	public void setRoleStatus(String status) {
+		//lastModifiedBy=SecurityContextHolder.getContext().getAuthentication().getName();
 		this.roleStatus=status;
 	}
 	

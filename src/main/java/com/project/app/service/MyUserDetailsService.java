@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.project.app.model.Privilege;
 import com.project.app.model.User;
 import com.project.app.repository.PrivilegeRepository;
+import com.project.app.repository.RoleRepository;
 import com.project.app.repository.UserRepository;
 
 @Service("userDetailsService")
@@ -24,6 +25,9 @@ public class MyUserDetailsService implements UserDetailsService{
 	
 	@Autowired
 	private PrivilegeRepository privilegeRepository;
+	
+	@Autowired
+	private RoleRepository roleRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -48,7 +52,8 @@ public class MyUserDetailsService implements UserDetailsService{
         	ArrayList<Privilege> privileges = privilegeRepository.findByRoleName(role.getRoleName());
         	for(Privilege privilege:privileges) {
         		for(String permission:privilege.getPermissions()) {
-        			authorities.add(new SimpleGrantedAuthority(privilege.getResourceName()+"_"+permission));
+        			//if(roleRepository.existsByName(privilege.getRoleName()))
+        			    authorities.add(new SimpleGrantedAuthority(privilege.getResourceName()+"_"+permission));
         		}
         	}
         });
