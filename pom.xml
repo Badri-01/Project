@@ -16,7 +16,53 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-	<dependencies>
+	 <dependencies>
+	 <dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.17.0</version>
+		</dependency>
+	<!--  <dependency>
+    <groupId>com.cloudinary</groupId>
+    <artifactId>cloudinary-core</artifactId>
+    <version>1.29.0</version>
+</dependency>
+<dependency>
+	<groupId>com.cloudinary</groupId>
+	<artifactId>cloudinary-taglib</artifactId>
+	<version>1.4.4</version>
+</dependency>
+<dependency>
+    <groupId>com.cloudinary</groupId>
+    <artifactId>cloudinary-http44</artifactId>
+    <version>1.29.0</version>
+</dependency> -->
+<!-- Thanks for using https://jar-download.com -->
+
+	<!-- 
+
+	<dependency>
+	<groupId>com.cloudinary</groupId>
+	<artifactId>cloudinary-taglib</artifactId>
+	<version>1.4.0</version>
+</dependency>
+	
+<dependency>
+    <groupId>com.cloudinary</groupId>
+    <artifactId>cloudinary-http44</artifactId>
+    <version>1.17.0</version>
+</dependency>
+ -->
+	<!-- https://mvnrepository.com/artifact/com.cloudinary/cloudinary-core -->
+
+	<!-- https://mvnrepository.com/artifact/junit/junit -->
+<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13</version>
+			<scope>test</scope>
+		</dependency>
+	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -47,10 +93,7 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-		<dependency>
-    		<groupId>org.springframework.boot</groupId>
-    		<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
+		
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>

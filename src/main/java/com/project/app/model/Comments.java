@@ -1,14 +1,18 @@
 package com.project.app.model;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Component;
 
 @Component 
 @Document("defects")
 public class Comments {
+	@NotNull(message ="Comment description should be provided")
 private String description;
+	@NotNull(message ="User id should be provided for adding comments")
 private String userId;
-private String defectId;
+
 private String date;
 public String getDescription() {
 	return description;
@@ -27,12 +31,6 @@ public String getDate() {
 }
 public void setDate(String date) {
 	this.date = date;
-}
-public String getDefectId() {
-	return defectId;
-}
-public void setDefectId(String defectId) {
-	this.defectId = defectId;
 }
 
 }

@@ -8,8 +8,8 @@ public class DefectStatus {
 	private int severity;
 	
 	private String userId;
-	private String fromDate;
-	private String toDate;
+	private String updateDate;
+	
 	public String getStatus() {
 		return status;
 	}
@@ -28,17 +28,12 @@ public class DefectStatus {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public String getFromDate() {
-		return fromDate;
+	public String getUpdateDate() {
+		return updateDate;
 	}
-	public void setFromDate(String fromDate) {
-		this.fromDate = fromDate;
+	public void setUpdateDate(String fromDate) {
+		this.updateDate = fromDate;
 	}
-	public String getToDate() {
-		return toDate;
-	}
-	public void setToDate(String toDate) {
-		this.toDate = toDate;
-	}
+	
 	
 }

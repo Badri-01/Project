@@ -8,8 +8,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.project.app.model.Defects;
 import com.project.app.model.Historymodel;
 import com.project.app.model.Testcasemodel;
+import com.project.app.repository.DefectRepository;
 import com.project.app.repository.Historyrepo;
 import com.project.app.repository.Testcaserepo;
 
@@ -20,6 +22,8 @@ public class Scheduler {
 	@Autowired
 	private Testcaserepo testcaserepo;
 	@Autowired
+	private DefectRepository defectRepo;
+	@Autowired
 	private Historyrepo repo;
 	
 	@Scheduled(cron = "0 0 7 * * *")
@@ -27,10 +31,14 @@ public class Scheduler {
 		int noOftestcaseopened=0;
 		int noOftestcasepassed=0;
 		int noOftestcasefailed=0;
+		int noOfOpenDefects=0;
+		int noOfCloseDefects=0;
 		List<Testcasemodel> testcasesList=testcaserepo.findAll();
+		List<Defects> defectsList=defectRepo.findAll();
 		Historymodel history=new Historymodel();
 		history.setTimeofscheduler("startoftheday");
 		history.setTotalnooftestcases(testcasesList.size());
+		history.setTotalNoofDefects(defectsList.size());
 		for(Testcasemodel testcase:testcasesList) {
 			if(testcase.getStatus().equals("Notstarted")) {
 				noOftestcaseopened+=1;
@@ -43,6 +51,18 @@ public class Scheduler {
 				noOftestcasefailed+=1;
 			}
 		}
+		for(Defects defect:defectsList) {
+			if(defect.getStatus().equals("close")) {
+				noOfCloseDefects+=1;
+				
+			}
+			else  {
+				noOfOpenDefects+=1;
+			}
+			
+		}
+		history.setNoofOpenDefects(noOfOpenDefects);
+		history.setNoofCloseDefects(noOfCloseDefects);
 			history.setNooftestcasepassed(noOftestcasepassed);
 			history.setNooftestcasesfailed(noOftestcasefailed);
 			history.setNooftestcasesopened(noOftestcaseopened);
@@ -54,10 +74,17 @@ public class Scheduler {
 		int noOftestcaseopened=0;
 		int noOftestcasepassed=0;
 		int noOftestcasefailed=0;
+		int noOfOpenDefects=0;
+		int noOfCloseDefects=0;
+		
+		List<Defects> defectsList=defectRepo.findAll();
+		
+		
 		List<Testcasemodel> testcasesList=testcaserepo.findAll();
 		Historymodel history=new Historymodel();
 		history.setTimeofscheduler("endoftheday");
 		history.setTotalnooftestcases(testcasesList.size());
+		history.setTotalNoofDefects(defectsList.size());
 		for(Testcasemodel testcase:testcasesList) {
 			if(testcase.getStatus().equals("Notstarted")) {
 				noOftestcaseopened+=1;
@@ -70,6 +97,18 @@ public class Scheduler {
 				noOftestcasefailed+=1;
 			}
 		}
+		for(Defects defect:defectsList) {
+			if(defect.getStatus().equals("close")) {
+				noOfCloseDefects+=1;
+				
+			}
+			else  {
+				noOfOpenDefects+=1;
+			}
+			
+		}
+		history.setNoofOpenDefects(noOfOpenDefects);
+		history.setNoofCloseDefects(noOfCloseDefects);
 			history.setNooftestcasepassed(noOftestcasepassed);
 			history.setNooftestcasesfailed(noOftestcasefailed);
 			history.setNooftestcasesopened(noOftestcaseopened);

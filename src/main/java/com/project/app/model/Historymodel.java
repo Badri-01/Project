@@ -16,6 +16,9 @@ public class Historymodel {
 	private int nooftestcasepassed;
 	private int nooftestcasesfailed;
 	private int totalnooftestcases;
+	private int totalNoofDefects;
+	private int noofOpenDefects;
+	private int noofCloseDefects;
 	public int getNooftestcasepassed() {
 		return nooftestcasepassed;
 	}
@@ -53,6 +56,24 @@ public class Historymodel {
 	}
 	public void setTotalnooftestcases(int totalnooftestcases) {
 		this.totalnooftestcases = totalnooftestcases;
+	}
+	public int getTotalNoofDefects() {
+		return totalNoofDefects;
+	}
+	public void setTotalNoofDefects(int totalNoofDefects) {
+		this.totalNoofDefects = totalNoofDefects;
+	}
+	public int getNoofOpenDefects() {
+		return noofOpenDefects;
+	}
+	public void setNoofOpenDefects(int noofOpenDefects) {
+		this.noofOpenDefects = noofOpenDefects;
+	}
+	public int getNoofCloseDefects() {
+		return noofCloseDefects;
+	}
+	public void setNoofCloseDefects(int noofCloseDefects) {
+		this.noofCloseDefects = noofCloseDefects;
 	}
 	
 	

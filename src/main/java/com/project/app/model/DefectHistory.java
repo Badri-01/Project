@@ -1,5 +1,6 @@
 package com.project.app.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,8 @@ import org.springframework.stereotype.Component;
 public class DefectHistory {
 
 private String defectId;
-@Autowired
-private List<DefectStatus> defectStatus;
+
+private ArrayList<DefectStatus> defectStatus=new ArrayList<>();
 
 
 public String getDefectId() {
@@ -20,10 +21,10 @@ public String getDefectId() {
 public void setDefectId(String defectId) {
 	this.defectId = defectId;
 }
-public List<DefectStatus> getDefectStatus() {
+public ArrayList<DefectStatus> getDefectStatus() {
 	return defectStatus;
 }
-public void setDefectStatus(List<DefectStatus> defectStatus) {
+public void setDefectStatus(ArrayList<DefectStatus> defectStatus) {
 	this.defectStatus = defectStatus;
 }
 }

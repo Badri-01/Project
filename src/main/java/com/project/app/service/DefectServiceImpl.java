@@ -5,11 +5,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.directory.InvalidAttributesException;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.project.app.exception.DefectNotFoundExceptin;
+import com.project.app.exception.DefectRemovedException;
 import com.project.app.model.Comments;
+import com.project.app.model.Count;
 import com.project.app.model.DefectHistory;
 import com.project.app.model.DefectStatus;
 import com.project.app.model.Defects;
@@ -21,51 +26,53 @@ public class DefectServiceImpl implements DefectServiceInt{
 DefectRepository defectRepository;
 @Autowired
 DefectHistoryRepository defectHistoryRepo;
+
+
 @Autowired
-DefectHistory defectHistory;
-@Autowired
-DefectStatus defectStatus;
-private int count=1;
+private Count count;
 	@Override
-	public void updateDefectDetails(Defects defect) {
+	public Defects updateDefectDetails(Defects defect) throws InvalidAttributesException, DefectNotFoundExceptin {
 		// TODO Auto-generated method stub
 		defect.setLastUpdateDate(getTimeStamp());
-		updateDefectHistory(defect);
 		defectRepository.update(defect);
+		updateDefectHistory(defect);
+		return defect;
+		
 		
 	}
 
 	private void updateDefectHistory(Defects defect) {
 		// TODO Auto-generated method stub
-		Defects oldDefect=defectRepository.finddefectById(defect.getDefectId());
+		DefectHistory defectHistory =new DefectHistory();
+		DefectStatus defectStatus = new DefectStatus();
 		
-		if(!oldDefect.getStatus().equals(defect.getStatus())||!oldDefect.getUserId().equals(defect.getUserId())) {
-			if(oldDefect.getStatus().equalsIgnoreCase("open")) {
-				defectStatus.setFromDate(oldDefect.getCreateDate());
-				
-			}else {
-				defectStatus.setFromDate(oldDefect.getLastUpdateDate());
-			}
-			defectStatus.setStatus(oldDefect.getStatus());
-			defectStatus.setToDate(defect.getLastUpdateDate());
+		
+		
+			defectStatus.setStatus(defect.getStatus());
+			defectStatus.setUpdateDate(defect.getLastUpdateDate());
 			defectHistory.setDefectId(defect.getDefectId());
-			defectStatus.setUserId(oldDefect.getUserId());
-			defectStatus.setSeverity(oldDefect.getSeverity());
-			defectHistory.getDefectStatus().add(defectStatus);
-			System.out.println("test");
+			defectStatus.setUserId(defect.getUserId());
+			defectStatus.setSeverity(defect.getSeverity());
+			ArrayList<DefectStatus> defectStatusnew =new ArrayList<>();
+			defectStatusnew.add(defectStatus);
+			defectHistory.setDefectStatus(defectStatusnew);
 			defectHistoryRepo.save(defectHistory);
-		}
+			}
 		
-	}
+	
 
 	@Override
-	public JSONObject findDefectByID(String defectID) {
+	public JSONObject findDefectByID(String defectID) throws DefectNotFoundExceptin {
 		// TODO Auto-generated method stub
+		Defects defect=defectRepository.finddefectById(defectID);
+		if(defect==null) {
+			throw new DefectNotFoundExceptin(defectID);
+		}
 		JSONObject newJson =new JSONObject(defectRepository.finddefectById(defectID));
-		System.out.println(newJson);
+		
 		newJson.put("defectHistory",defectHistoryRepo.finddefectHistoryById(defectID));
 		
-		System.out.println(newJson);
+		
 		return newJson;
 	}
 
@@ -76,16 +83,41 @@ private int count=1;
 	}
 
 	@Override
-	public void newDefect(Defects defect) {
+	public Defects newDefect(Defects defect) throws InvalidAttributesException {
 		// TODO Auto-generated method stub
-		
+		int newCount=getCount()+1;
+		defect.setDefectId("D_"+newCount);
+		defect.setStatus("new");
 		defect.setCreateDate(getTimeStamp());
+		defect.setLastUpdateDate(getTimeStamp());
+		
+		updateCount(newCount);
 		defectRepository.save(defect);
+		updateDefectHistory(defect);
+		return defect;
+	}
+
+	private void updateCount(int count) {
+		// TODO Auto-generated method stub
+		defectRepository.updateCountId(count);
+	}
+
+	private int getCount() {
+		// TODO Auto-generated method stub
+		return defectRepository.getCountById();
 	}
 
 	@Override
-	public void deleteDefect(String defectID) {
+	public void deleteDefect(String defectID) throws InvalidAttributesException, DefectNotFoundExceptin, DefectRemovedException {
 		// TODO Auto-generated method stub
+		Defects defect=defectRepository.finddefectById(defectID);
+		if(defect==null) {
+			throw new DefectNotFoundExceptin(defectID);
+		}else if(defect.getStatus().equals("close")) {
+			throw new DefectRemovedException(defectID);
+		}
+		defect.setStatus("close");
+		updateDefectHistory(defect);
 		defectRepository.deleteById(defectID);
 	}
 	public static String getTimeStamp() {
@@ -98,25 +130,36 @@ private int count=1;
 
 	
 	@Override
-	public void addComment(Comments comment,String defectId) {
+	public void addComment(Comments comment,String defectId) throws DefectNotFoundExceptin, DefectRemovedException {
 		// TODO Auto-generated method stub
 		Defects defect=defectRepository.finddefectById(defectId);
-		if(defect.getComment()==null) {
-			List<Comments> commentList=new ArrayList<>();
-			commentList.add(comment);
-			defect.setComment(commentList);
-		}else {
-			List<Comments> commentList=	defect.getComment();;
-		commentList.add(comment);
-		defect.setComment(commentList);
+		if(defect==null) {
+			throw new DefectNotFoundExceptin(defectId);
+		}else if(defect.getStatus().equals("close")) {
+			throw new DefectRemovedException(defectId);
 		}
-		defectRepository.save(defect);
+		
+		defectRepository.addComments(defectId,comment,defect);
 		
 	}
 
 	@Override
-	public JSONObject findDefectHistoryByID(String defectID) {
+	public List<DefectHistory> findDefectHistoryByID(String defectID) {
 		// TODO Auto-generated method stub
-		return new JSONObject(defectHistoryRepo.finddefectHistoryById(defectID));
+		return defectHistoryRepo.finddefectHistoryById(defectID);
+	}
+
+	@Override
+	public void addAttachment(Defects defect,String defectId) throws DefectNotFoundExceptin, DefectRemovedException {
+		// TODO Auto-generated method stub
+		Defects newdefect=defectRepository.finddefectById(defectId);
+		if(newdefect==null) {
+			throw new DefectNotFoundExceptin(defectId);
+		}else if(newdefect.getStatus().equals("close")) {
+			throw new DefectRemovedException(defectId);
+		}
+		
+		defectRepository.addAttachment(defectId,defect,newdefect);
+		
 	}
 }
